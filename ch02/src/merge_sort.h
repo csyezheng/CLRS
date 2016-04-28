@@ -1,46 +1,42 @@
-﻿#pragma once
+#pragma once
+
+#include <memory>
 
 namespace clrs
 {
 	template<typename T>
-	void merge(T &seq, std::size_t p, std::size_t q, std::size_t r)
+	T merge(T lseq, T rseq)
 	{
-		auto n1 = q - p + 1;
-		auto n2 = r - q;
-		auto sz1 = n1 + 1; sz2 = n2 + 1;
-		int lseq[n1 + 1], rseq[n2 + 1];
-		for (auto i = 0; i != n1; ++i)
-			lseq[i] = seq[p + i - 1];
-		for (auto j = 0; j != n2; ++j)
-			rseq[j] = seq[q + j];
-		lseq[n1] = -1;
-		rseq[n2] = -1;
-		std::size_t i = 0; j = 0;
-		for (auto k = 0; k != seq.size(); ++j)
+		T seq;
+		auto l = lseq.cbegin();
+		auto r = rseq.cbegin();
+		while (l != lseq.cend() && r != rseq.cend())
 		{
-			if (lseq[i] <= rseq[j])
-			{
-				seq[k] = lseq[i];
-				++i;
-			}
+			if (*l <= *r)
+				seq.push_back(*l++);
 			else
-			{
-				seq[k] = rseq[j];
-				++j;
-			}
+				seq.push_back(*r++);
 		}
+		if (r == rseq.cend())
+			while (l != lseq.cend())
+				seq.push_back(*l++);
+		else
+			while (r != rseq.cend())
+				seq.push_back(*r++);
+		return seq;
 	}
 
 
 	template<typename T>
-	void merge_sort(T &seq, std::size_t p, std::size_t r)
+	T merge_sort(const T &seq)
 	{
-		if (p < r)
+		if (seq.size() > 1)
 		{
-			auto q = (p + r) / 2;
-			merge_sort(seq, p, q);
-			merge_sort(seq, q + 1, r);
-			merge(seq, p, q, r);
+			auto mid = seq.cbegin() + seq.size() / 2;
+			auto lseq = merge_sort(T(seq.cbegin(), mid));
+			auto rseq = merge_sort(T(mid, seq.cend()));
+			return merge(lseq, rseq);
 		}
+		return seq;
 	}
 }
