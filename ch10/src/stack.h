@@ -9,9 +9,14 @@ namespace CLRS
 	class Stack
 	{
 	public:
+		using size_type = typename C::size_type;
 		bool empty() const
 		{
 			return top == 0;
+		}
+		size_type size() const
+		{
+			return s.size();
 		}
 		void push(const T &item)
 		{
@@ -25,7 +30,7 @@ namespace CLRS
 		}
 		T pop()
 		{
-			if (top != 0)
+			if (top == 0)
 				throw std::runtime_error("pop on empty stack");
 			auto ret = s.back();
 			s.pop_back();
